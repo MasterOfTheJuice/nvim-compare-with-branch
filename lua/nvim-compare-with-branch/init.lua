@@ -33,8 +33,8 @@ local function create_branch_selection_window(branches, callback)
     border = "rounded",
   })
 
-  vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "<cmd>lua require'compare_with_branch'.on_branch_selected()<CR>", { noremap = true, silent = true })
-  vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "<cmd>lua require'compare_with_branch'.close_branch_selection()<CR>", { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "<cmd>lua require'nvim-compare-with-branch'.on_branch_selected()<CR>", { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "<cmd>lua require'nvim-compare-with-branch'.close_branch_selection()<CR>", { noremap = true, silent = true })
   vim.api.nvim_buf_set_var(buf, "branches", branches)
   vim.api.nvim_buf_set_var(buf, "callback", callback)
 
