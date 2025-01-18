@@ -34,10 +34,16 @@ local function create_branch_selection_window(branches, callback)
   })
 
   vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "<cmd>lua require'compare_with_branch'.on_branch_selected()<CR>", { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "<cmd>lua require'compare_with_branch'.close_branch_selection()<CR>", { noremap = true, silent = true })
   vim.api.nvim_buf_set_var(buf, "branches", branches)
   vim.api.nvim_buf_set_var(buf, "callback", callback)
 
   return buf, win
+end
+
+function M.close_branch_selection()
+  local win = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_close(win, true)
 end
 
 function M.on_branch_selected()
@@ -76,7 +82,7 @@ local function select_git_branch(callback)
 end
 
 -- Show diff for the active buffer
-local function compare_with_branch()
+local function show_git_diff()
   -- Get current file path
   local file_path = vim.fn.expand("%")
   if file_path == nil or file_path == "" then
@@ -122,14 +128,14 @@ function M.setup()
   vim.api.nvim_create_user_command(
     "CompareWithBranch",
     function()
-      compare_with_branch()
+      show_git_diff()
     end,
     { desc = "Show git diff for the active buffer with a selected branch" }
   )
 
   vim.api.nvim_set_keymap(
     "n",
-    "<leader>gd",
+    "<leader>bd",
     ":CompareWithBranch<CR>",
     { noremap = true, silent = true, desc = "Show git diff for the active buffer" }
   )
