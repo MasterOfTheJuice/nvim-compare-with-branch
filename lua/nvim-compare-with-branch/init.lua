@@ -33,7 +33,7 @@ local function create_branch_selection_window(branches, callback)
     border = "rounded",
   })
 
-  vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "<cmd>lua require'buffer_git_diff'.on_branch_selected()<CR>", { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "<cmd>lua require'compare_with_branch'.on_branch_selected()<CR>", { noremap = true, silent = true })
   vim.api.nvim_buf_set_var(buf, "branches", branches)
   vim.api.nvim_buf_set_var(buf, "callback", callback)
 
