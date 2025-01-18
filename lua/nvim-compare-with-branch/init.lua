@@ -70,6 +70,33 @@ local function run_git_command(cmd)
   return vim.split(result, "\n")
 end
 
+-- Perform a unified diff between two sets of lines
+local function unified_diff(old_lines, new_lines)
+  local diff = {}
+  local old_idx, new_idx = 1, 1
+
+  while old_idx <= #old_lines or new_idx <= #new_lines do
+    if old_idx > #old_lines then
+      table.insert(diff, "+ " .. new_lines[new_idx])
+      new_idx = new_idx + 1
+    elseif new_idx > #new_lines then
+      table.insert(diff, "- " .. old_lines[old_idx])
+      old_idx = old_idx + 1
+    elseif old_lines[old_idx] ~= new_lines[new_idx] then
+      table.insert(diff, "- " .. old_lines[old_idx])
+      table.insert(diff, "+ " .. new_lines[new_idx])
+      old_idx = old_idx + 1
+      new_idx = new_idx + 1
+    else
+      table.insert(diff, "  " .. old_lines[old_idx])
+      old_idx = old_idx + 1
+      new_idx = new_idx + 1
+    end
+  end
+
+  return diff
+end
+
 -- Prompt the user to select a Git branch
 local function select_git_branch(callback)
   local branches = run_git_command("git branch --all --format='%(refname:short)'")
@@ -106,12 +133,7 @@ local function show_git_diff()
     end
 
     -- Perform side-by-side diff
-    local diff_command = string.format(
-      "diff -u <(echo '%s') <(echo '%s')",
-      table.concat(git_content, "\n"),
-      table.concat(file_content, "\n")
-    )
-    local diff_output = run_git_command(diff_command)
+    local diff_output = unified_diff(git_content, file_content)
 
     if not diff_output or #diff_output == 0 then
       vim.notify("No differences found.", vim.log.levels.INFO)
@@ -135,7 +157,7 @@ function M.setup()
 
   vim.api.nvim_set_keymap(
     "n",
-    "<leader>bd",
+    "<leader>gd",
     ":CompareWithBranch<CR>",
     { noremap = true, silent = true, desc = "Show git diff for the active buffer" }
   )
